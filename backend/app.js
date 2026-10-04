@@ -100,7 +100,7 @@ async function submitOrderRequest(token, orderData) {
 
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { identifier, password, rememberMe } = req.body;
+    const { identifier, password, rememberMe, autoRegister } = req.body;
 
     if (!identifier || !password) {
       return res.status(400).json({ message: 'Email/ID and password are required' });
@@ -112,6 +112,38 @@ app.post('/api/auth/login', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+      if (autoRegister) {
+        const isEmail = identifier.includes('@');
+        const email = isEmail ? identifier : `${identifier}@hefportal.local`;
+        const idNumber = isEmail ? `AUTO-${Date.now()}` : identifier;
+        const fullName = isEmail ? identifier.split('@')[0] : `User ${identifier}`;
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUserId = Date.now().toString();
+
+        await query(
+          `INSERT INTO users (id, email, id_number, full_name, password, user_type, created_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [newUserId, email, idNumber, fullName, hashedPassword, 'applicant', new Date().toISOString()]
+        );
+
+        const token = jwt.sign(
+          { userId: newUserId, email },
+          JWT_SECRET,
+          { expiresIn: rememberMe ? '30d' : '1d' }
+        );
+
+        return res.json({
+          token,
+          user: {
+            id: newUserId,
+            email,
+            fullName,
+            idNumber
+          },
+          autoRegistered: true
+        });
+      }
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 

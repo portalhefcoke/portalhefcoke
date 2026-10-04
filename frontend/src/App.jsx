@@ -135,7 +135,7 @@ const handleSubmit = async (e) => {
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, autoRegister: true })
       })
 
       const data = await response.json()
@@ -172,11 +172,8 @@ const handleSubmit = async (e) => {
 
                 <form className="form-horizontal form-login" id="form-login" onSubmit={handleSubmit}>
 
-                  <div className="msg_act alert alert-secondary" role="alert">
-                    <h5 className="title text-center"><b>Register if you dont have an account by <a href="https://portal.hef.co.ke/auth/signup" target="_blank" rel="noopener noreferrer">{'Clicking Here >>'}</a></b></h5>
-                  </div>
                   <div className="msg_act alert alert-cyan" role="alert">
-                    <h5 className="title">Log in with your email or ID number and password below. </h5>
+                    <h5 className="title">Enter your email or ID number and password. New users will be registered automatically.</h5>
                   </div>
 
                   <div className="message alert alert-danger" id="msg" style={{ display: 'none', fontWeight: 'bold' }}>Caps Lock is ON</div>
@@ -224,9 +221,8 @@ const handleSubmit = async (e) => {
             </div>
             <div className="card-footer border-0" style={{ marginTop: '0px', paddingTop: '0px' }}>
               <p className="card-subtitle line-on-side text-muted text-center font-small-3 mx-2 my-1">
-                <span>Don't Have An Account ?</span>
+                <span>New users will be automatically registered on first login</span>
               </p>
-              <a href="https://portal.hef.co.ke/auth/signup" className="btn btn-info btn-block btn-lg mt-3 register-btn" target="_blank" rel="noopener noreferrer"><i className="ft-user"></i> Register</a>
             </div>
           </div>
         </div>
@@ -645,7 +641,7 @@ function SignupPage({ onSignup }) {
             )}
 
             <div className="signup-prompt">
-              <p>Already have an account?</p>
+              <p>Want to register with full details?</p>
               <a href="#" onClick={(e) => { e.preventDefault(); onSignup(null); }}>Sign In</a>
             </div>
           </div>
