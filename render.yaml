@@ -1,33 +1,26 @@
 services:
-  # Fullstack Backend API + Frontend
   - type: web
-    name: hef-portal
-    rootDir: backend
+    name: hef-portal-backend
     env: node
-    plan: free
-    buildCommand: npm install && cd ../frontend && npm install && npm run build
-    startCommand: npm start
-    healthCheckPath: /api/health
+    buildCommand: npm install
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: JWT_SECRET
         generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hef-portal-db
+          property: connectionString
       - key: PESAPAL_CONSUMER_SECRET
         sync: false
       - key: PESAPAL_CALLBACK_URL
-        value: https://hef-portal.onrender.com/api/payment/callback
-      - key: PESAPAL_NOTIFICATION_ID
-        sync: false
-      - key: DATABASE_URL
-        fromDatabase:
-          name: hef-db
-          property: connectionString
+        value: https://hef-portal-backend.onrender.com/api/payment/callback
+      - key: FRONTEND_URL
+        value: https://hef-portal.vercel.app
 
-  # PostgreSQL Database (Free for 90 days, then $7/mo)
-  - type: pserv
-    name: hef-db
-    plan: free
+databases:
+  - name: hef-portal-db
     databaseName: hef_portal
-    user: hef_user
-    region: oregon  # or frankfurt, singapore
+    user: hef_portal_user
