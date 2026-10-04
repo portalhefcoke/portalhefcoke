@@ -1,32 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { query } = require('../_db.js');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'hef-portal-secret-key';
-
-const users = new Map();
-
-async function query(sql, params) {
-  if (sql.includes('SELECT * FROM users WHERE email = $1 OR id_number = $1')) {
-    const identifier = params[0];
-    for (const user of users.values()) {
-      if (user.email === identifier || user.id_number === identifier) {
-        return { rows: [user] };
-      }
-    }
-    return { rows: [] };
-  }
-  if (sql.includes('SELECT * FROM users WHERE id = $1')) {
-    const user = users.get(params[0]);
-    return { rows: user ? [user] : [] };
-  }
-  if (sql.includes('INSERT INTO users')) {
-    const [id, email, id_number, full_name, password, user_type, created_at] = params;
-    const user = { id, email, id_number, full_name, password, user_type, created_at };
-    users.set(id, user);
-    return { rows: [user] };
-  }
-  return { rows: [] };
-}
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
