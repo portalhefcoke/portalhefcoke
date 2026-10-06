@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
-const { query } = require('../_db.js');
+import jwt from 'jsonwebtoken';
+import { query } from './_db.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'hef-portal-secret-key';
 
-function authMiddleware(req, res) {
+function authMiddleware(req) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null;
@@ -16,8 +16,8 @@ function authMiddleware(req, res) {
   }
 }
 
-module.exports = async (req, res) => {
-  const decoded = authMiddleware(req, res);
+export default async (req, res) => {
+  const decoded = authMiddleware(req);
   if (!decoded) {
     return res.status(401).json({ message: 'Invalid token' });
   }

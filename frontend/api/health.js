@@ -1,8 +1,8 @@
-const { initializeDatabase } = require('./_db.js');
+import { initializeDatabase } from './_db.js';
 
 let initialized = false;
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   if (!initialized) {
     try {
       await initializeDatabase();

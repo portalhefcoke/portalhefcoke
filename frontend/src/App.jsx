@@ -249,6 +249,8 @@ function SignupPage({ onSignup }) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
+  const API_URL = import.meta.env.VITE_API_URL || '';
+
   const calculatePasswordStrength = (password) => {
     if (!password) return 0;
     let score = 0;
@@ -709,6 +711,8 @@ function AppealApplicationPage({ user, onSubmitAppeal }) {
   const [loading, setLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(1)
   const [completedSteps, setCompletedSteps] = useState(new Set([1]))
+
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   const handleChange = (e) => {
     const { name, value, files } = e.target
